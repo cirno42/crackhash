@@ -1,0 +1,7 @@
+server:
+  port: 8080
+
+hashcracker:
+  worker-address: http://localhost:8081
+  workers-amount: 3
+  worker-timeout: 100000

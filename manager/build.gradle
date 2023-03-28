@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.4'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'ru.nsu.anikolotov.crackhash'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '19'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets.main.java.srcDirs += "build/generated/sources/xsd"
+
+project.ext {
+    jaxbTargetDir = file("build/generated/sources/xsd")
+}
+
+configurations {
+    xsd2java
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.nsu.nikolotov.crackhash.manager.ManagerApplication'
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'
+    implementation 'wsdl4j:wsdl4j'
+    xsd2java "com.sun.xml.bind:jaxb-xjc:3.0.2"
+    xsd2java "com.sun.xml.bind:jaxb-impl:3.0.2"
+    xsd2java "com.sun.xml.bind:jaxb-core:3.0.2"
+    xsd2java "com.sun.activation:jakarta.activation:2.0.1"
+    xsd2java "jakarta.xml.bind:jakarta.xml.bind-api:3.0.1"
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+task xsd2java() {
+
+    doLast {
+        jaxbTargetDir.mkdirs()
+
+        ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.xsd2java.asPath)
+        ant.jaxbTargetDir = jaxbTargetDir
+
+        ant.xjc(
+                destdir: '${jaxbTargetDir}',
+                package: 'ru.nsu.anikolotov.crackhash.manager.dto',
+                schema: 'src/main/resources/xsd/CrackHashManagerSchema.xsd'
+        )
+
+        ant.xjc(
+                destdir: '${jaxbTargetDir}',
+                package: 'ru.nsu.anikolotov.crackhash.manager.dto',
+                schema: 'src/main/resources/xsd/CrackHashWorkerSchema.xsd'
+        )
+
+    }
+}
+
+compileJava.dependsOn xsd2java
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
