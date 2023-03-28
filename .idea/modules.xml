@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/crackhash.iml" filepath="$PROJECT_DIR$/.idea/crackhash.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/manager.main.iml" filepath="$PROJECT_DIR$/.idea/modules/manager.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/worker.main.iml" filepath="$PROJECT_DIR$/.idea/modules/worker.main.iml" />
     </modules>
   </component>
 </project>
