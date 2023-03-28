@@ -8,6 +8,7 @@ group = 'ru.nsu.anikolotov.crackhash'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '19'
 
+
 repositories {
     mavenCentral()
 }
@@ -25,6 +26,10 @@ configurations {
 jar {
     manifest {
         attributes 'Main-Class': 'ru.nsu.nikolotov.crackhash.manager.ManagerApplication'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
