@@ -2,6 +2,22 @@ server:
   port: 8080
 
 hashcracker:
-  worker-address: http://localhost:8081
   workers-amount: 3
-  worker-timeout: 100000
+  worker-timeout: 10000
+
+spring:
+  rabbitmq:
+    addresses: 127.0.0.1:5672
+    virtual-host: /
+    username: guest
+    password: guest
+    listener:
+      simple:
+        max-concurrency: 1
+        concurrency: 1
+        acknowledge-mode: auto
+        default-requeue-rejected: false
+        prefetch: 1
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/test

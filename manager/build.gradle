@@ -35,6 +35,8 @@ jar {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
@@ -48,6 +50,8 @@ dependencies {
     xsd2java "jakarta.xml.bind:jakarta.xml.bind-api:3.0.1"
     implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
 
 task xsd2java() {

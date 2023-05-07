@@ -1,6 +1,16 @@
 server:
   port: 8081
 
-hashcracker:
-  manager-address: http://localhost:8080
-
+spring:
+  rabbitmq:
+    addresses: 127.0.0.1:5672
+    virtual-host: /
+    username: guest
+    password: guest
+    listener:
+      simple:
+        max-concurrency: 1
+        concurrency: 1
+        acknowledge-mode: auto
+        default-requeue-rejected: false
+        prefetch: 1
