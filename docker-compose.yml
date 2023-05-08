@@ -3,18 +3,18 @@ version: "3.3"
 services:
   manager:
     container_name: manager
-    image: crackhash-manager:latest
+    image: crackhash-manager:finish-1
     ports:
       - "8080:8080"
     environment:
       spring.rabbitmq.addresses : ds-rabbitmq:5672
-      spring.data.mongodb.uri : mongodb://mongo1:27017,mongo2:27018,mongo3:27019/test
+      spring.data.mongodb.uri : mongodb://mongo1:27017,mongo2:27017,mongo3:27017/test
       hashcracker.workers-amount : 3
     networks:
       - crack-hash-net
 
   worker:
-    image: crackhash-worker:latest
+    image: crackhash-worker:finish-1
     environment:
       spring.rabbitmq.addresses: ds-rabbitmq:5672
     networks:

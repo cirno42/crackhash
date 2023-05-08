@@ -16,6 +16,8 @@ import ru.nsu.anikolotov.crackhash.manager.mq.MQConstants;
 import ru.nsu.anikolotov.crackhash.manager.repository.TaskRepository;
 import ru.nsu.anikolotov.crackhash.manager.utils.Utils;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,6 +60,9 @@ public class ManagerService {
             if (currentStatus.getFinishedWorkers().size() == workersAmount) {
                 currentStatus.setStatus(CrackingStatus.READY);
                 log.info("task {} is ready!", response.getRequestId());
+            }
+            if (Instant.now().minus(workerTimeoutInMillis, ChronoUnit.MILLIS).isAfter(currentStatus.getStartTime())) {
+                currentStatus.setStatus(CrackingStatus.ERROR);
             }
             taskRepository.save(currentStatus);
         }
