@@ -1,6 +1,7 @@
 package ru.nsu.anikolotov.crackhash.manager.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerService {
 
     private final ScheduledExecutorService timeoutExecutor = Executors.newScheduledThreadPool(2);
@@ -46,11 +48,16 @@ public class ManagerService {
         UUID requestId = UUID.fromString(response.getRequestId());
         var currentStatus = taskRepository.findById(requestId)
                 .orElseThrow();
+        log.info("received answer from {} for task {} result: {}",
+                response.getPartNumber(), response.getRequestId(), response.getAnswers().getWords());
         if (CrackingStatus.IN_PROGRESS.equals(currentStatus.getStatus())) {
             currentStatus.getData().addAll(response.getAnswers().getWords());
             currentStatus.getFinishedWorkers().add(response.getPartNumber());
+            log.info("task {} has {} answers, need {} answers", response.getRequestId(),
+                    currentStatus.getFinishedWorkers().size(), workersAmount);
             if (currentStatus.getFinishedWorkers().size() == workersAmount) {
                 currentStatus.setStatus(CrackingStatus.READY);
+                log.info("task {} is ready!", response.getRequestId());
             }
             taskRepository.save(currentStatus);
         }
@@ -63,6 +70,7 @@ public class ManagerService {
     }
 
     private void sendRequestsToWorkers(UUID requestId, String hash, Integer maxLength) {
+        log.info("Send task {} to {} workers", requestId, workersAmount);
         for (int i = 0; i < workersAmount; i++) {
             CrackHashManagerRequest request = new CrackHashManagerRequest();
             request.setRequestId(requestId.toString());
@@ -75,6 +83,7 @@ public class ManagerService {
             request.setPartNumber(i);
             rabbitTemplate.convertAndSend(MQConstants.MANAGER_REQUEST_QUEUE, request);
         }
+        log.info("Task {} was sent successfully", requestId);
         timeoutExecutor.schedule(() -> cancelCracking(requestId), workerTimeoutInMillis, TimeUnit.MILLISECONDS);
     }
 
@@ -83,6 +92,7 @@ public class ManagerService {
                 .orElseThrow();
         if (!CrackingStatus.READY.equals(status.getStatus())) {
             status.setStatus(CrackingStatus.ERROR);
+            log.info("task {} is dead!", id);
             taskRepository.save(status);
         }
     }

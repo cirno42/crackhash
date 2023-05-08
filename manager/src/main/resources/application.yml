@@ -3,7 +3,7 @@ server:
 
 hashcracker:
   workers-amount: 3
-  worker-timeout: 10000
+  worker-timeout: 100000
 
 spring:
   rabbitmq:

@@ -4,7 +4,6 @@ import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
 import org.paukov.combinatorics3.Generator;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.nsu.nikolotov.crackhash.worker.dto.CrackHashManagerRequest;
 import ru.nsu.nikolotov.crackhash.worker.dto.CrackHashWorkerResponse;
@@ -24,7 +23,6 @@ public class HashCrackerService {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @Async
     public void crackHash(CrackHashManagerRequest request) {
         List<String> str = findStringsByHash(request);
         sendResponseToManager(str, request.getPartNumber(), request.getRequestId());
